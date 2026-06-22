@@ -1,4 +1,4 @@
-name: Build COI Mod
+name: Build COI Mod (Storable)
 
 on:
   push:
@@ -9,7 +9,7 @@ jobs:
     runs-on: windows-latest
 
     steps:
-      # 1. گرفتن سورس
+      # 1. دریافت کد
       - name: Checkout repository
         uses: actions/checkout@v4
 
@@ -19,22 +19,32 @@ jobs:
         with:
           dotnet-version: 8.0.x
 
-      # 3. Restore dependencies
-      - name: Restore
+      # 3. restore dependencies
+      - name: Restore dependencies
         run: dotnet restore
 
-      # 4. Build Release
-      - name: Build
+      # 4. build release
+      - name: Build project
         run: dotnet build -c Release
 
-      # 5. Debug مهم (برای پیدا کردن DLL)
-      - name: Show build output (debug)
+      # 5. پیدا کردن DLL (debug صحیح با PowerShell)
+      - name: Find Storable DLL
+        shell: pwsh
         run: |
-          echo "Searching for DLL files..."
-          dir /s
+          Write-Host "Searching for Storable.dll..."
 
-      # 6. پیدا کردن DLL و آپلود Artifact
-      - name: Upload DLL artifact
+          $dll = Get-ChildItem -Path . -Recurse -Filter "Storable.dll" -ErrorAction SilentlyContinue
+
+          if ($dll) {
+            Write-Host "FOUND DLL:"
+            $dll.FullName
+          } else {
+            Write-Host "DLL NOT FOUND"
+            exit 1
+          }
+
+      # 6. آپلود artifact
+      - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: Storable-mod

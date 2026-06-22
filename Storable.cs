@@ -3,6 +3,7 @@ using Mafi;
 using Mafi.Core;
 using Mafi.Core.Mods;
 using Mafi.Core.Products;
+using Mafi.Core.Prototypes;
 using Mafi.Collections;
 
 namespace Storable;
@@ -14,20 +15,21 @@ public sealed class Storable : IMod
     public bool IsUiOnly => false;
 
     public ModManifest Manifest { get; }
-    public Option<IConfig> ModConfig => Option<IConfig>.None;
+
+    public Option<IModConfig> ModConfig => Option<IModConfig>.None;
 
     public Storable(ModManifest manifest)
     {
         Manifest = manifest;
     }
 
-    public void Initialize(DependencyResolver resolver, bool gameWasLoaded) { }
-
-    public void ChangeConfigs(Lyst<IConfig> configs) { }
+    public void Initialize(DependencyResolver resolver, bool gameWasLoaded)
+    {
+    }
 
     public void RegisterPrototypes(ProtoRegistrator registrator)
     {
-        ProductProto.ID[] ids = { Ids.Products.Exhaust };
+        var ids = new[] { Ids.Products.Exhaust };
 
         var field = typeof(ProductProto).GetField(
             nameof(ProductProto.IsStorable),
@@ -49,14 +51,26 @@ public sealed class Storable : IMod
         }
     }
 
+    public void ChangeConfigs(Lyst<IModConfig> configs)
+    {
+    }
+
     public void RegisterDependencies(
         DependencyResolverBuilder depBuilder,
-        ProtosDb protosDb,
-        bool wasLoaded) { }
+        Mafi.Core.Prototypes.ProtosDb protosDb,
+        bool wasLoaded)
+    {
+    }
 
-    public void EarlyInit(DependencyResolver resolver) { }
+    public void EarlyInit(DependencyResolver resolver)
+    {
+    }
 
-    public void MigrateJsonConfig(VersionSlim savedVersion, Dict<string, object> savedValues) { }
+    public void MigrateJsonConfig(VersionSlim savedVersion, Dict<string, object> savedValues)
+    {
+    }
 
-    public void Dispose() { }
+    public void Dispose()
+    {
+    }
 }

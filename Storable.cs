@@ -17,21 +17,13 @@ public sealed class Storable : DataOnlyMod
     public string Name => "Storable";
     public int Version => 1;
 
-    private static bool _initialized;
-
     public override void RegisterPrototypes(ProtoRegistrator registrator)
     {
-        if (_initialized)
-            return;
-
-        ApplyGlobalBehaviorPatch(registrator);
-        _initialized = true;
+        ApplyPatch(registrator);
     }
 
-    private void ApplyGlobalBehaviorPatch(ProtoRegistrator registrator)
+    private void ApplyPatch(ProtoRegistrator registrator)
     {
-        var db = registrator.PrototypesDb;
-
         var field = typeof(ProductProto).GetField(
             nameof(ProductProto.IsStorable),
             BindingFlags.Public | BindingFlags.Instance
@@ -43,15 +35,20 @@ public sealed class Storable : DataOnlyMod
             return;
         }
 
-        foreach (var proto in db.GetAll<ProductProto>())
+        // فقط روی آیتم‌های مشخص (safe + supported)
+        var ids = new[]
         {
-            try
+            Ids.Products.Exhaust
+        };
+
+        foreach (var id in ids)
+        {
+            if (registrator.PrototypesDb.TryGetProto(id, out ProductProto proto))
             {
                 field.SetValue(proto, true);
             }
-            catch { }
         }
 
-        Log.Info("Storable: retroactive behavior applied");
+        Log.Info("Storable: patch applied safely");
     }
 }

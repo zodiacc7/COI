@@ -14,8 +14,8 @@ public sealed class Storable : DataOnlyMod
     {
     }
 
-    public override string Name => "Storable";
-    public override int Version => 1;
+    public string Name => "Storable";
+    public int Version => 1;
 
     public override void RegisterPrototypes(ProtoRegistrator registrator)
     {

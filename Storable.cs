@@ -1,4 +1,3 @@
-using System;
 using System.Reflection;
 using Mafi;
 using Mafi.Base;
@@ -22,16 +21,17 @@ public sealed class Storable : DataOnlyMod
 
     public override void RegisterPrototypes(ProtoRegistrator registrator)
     {
-        // فقط یک بار patch global
         if (_initialized)
             return;
 
-        ApplyGlobalBehaviorPatch(registrator.PrototypesDb);
+        ApplyGlobalBehaviorPatch(registrator);
         _initialized = true;
     }
 
-    private void ApplyGlobalBehaviorPatch(ProtosDb db)
+    private void ApplyGlobalBehaviorPatch(ProtoRegistrator registrator)
     {
+        var db = registrator.PrototypesDb;
+
         var field = typeof(ProductProto).GetField(
             nameof(ProductProto.IsStorable),
             BindingFlags.Public | BindingFlags.Instance
@@ -43,7 +43,6 @@ public sealed class Storable : DataOnlyMod
             return;
         }
 
-        // ⚡ مهم: به جای retrofit save، همه proto ها را enforce می‌کنیم
         foreach (var proto in db.GetAll<ProductProto>())
         {
             try
@@ -53,6 +52,6 @@ public sealed class Storable : DataOnlyMod
             catch { }
         }
 
-        Log.Info("Storable: global behavior override applied");
+        Log.Info("Storable: retroactive behavior applied");
     }
 }

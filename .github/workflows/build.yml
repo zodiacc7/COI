@@ -9,16 +9,36 @@ jobs:
     runs-on: windows-latest
 
     steps:
-      - name: Checkout
+      # 1. گرفتن سورس
+      - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Setup .NET
+      # 2. نصب .NET
+      - name: Setup .NET SDK
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: 8.0.x
 
+      # 3. Restore dependencies
       - name: Restore
         run: dotnet restore
 
+      # 4. Build Release
       - name: Build
         run: dotnet build -c Release
+
+      # 5. Debug مهم (برای پیدا کردن DLL)
+      - name: Show build output (debug)
+        run: |
+          echo "Searching for DLL files..."
+          dir /s
+
+      # 6. پیدا کردن DLL و آپلود Artifact
+      - name: Upload DLL artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Storable-mod
+          path: |
+            **/bin/Release/**/Storable.dll
+            **/bin/Release/Storable.dll
+            **/Storable.dll

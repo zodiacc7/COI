@@ -9,8 +9,8 @@ namespace Storable;
 
 public sealed class Storable : DataOnlyMod
 {
-    public Storable(ModManifest manifest, CoreMod coreMod, BaseMod baseMod)
-        : base(manifest, coreMod, baseMod)
+    public Storable(ModManifest manifest)
+        : base(manifest)
     {
     }
 

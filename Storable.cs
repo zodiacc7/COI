@@ -9,8 +9,8 @@ namespace Storable;
 
 public sealed class Storable : DataOnlyMod
 {
-    public override string Name => nameof(Storable);
-    public override int Version => 1;
+    public string Name => nameof(Storable);
+    public int Version => 1;
 
     public Storable(
         ModManifest manifest,

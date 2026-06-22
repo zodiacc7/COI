@@ -1,33 +1,23 @@
 using System.Reflection;
 using Mafi;
+using Mafi.Base;
 using Mafi.Core;
 using Mafi.Core.Mods;
 using Mafi.Core.Products;
-using Mafi.Core.Prototypes;
-using Mafi.Collections;
 
 namespace Storable;
 
-public sealed class Storable : IMod
+public sealed class Storable : DataOnlyMod
 {
-    public string Name => "Storable";
-    public int Version => 1;
-    public bool IsUiOnly => false;
-
-    public ModManifest Manifest { get; }
-
-    public Option<IModConfig> ModConfig => Option<IModConfig>.None;
-
-    public Storable(ModManifest manifest)
-    {
-        Manifest = manifest;
-    }
-
-    public void Initialize(DependencyResolver resolver, bool gameWasLoaded)
+    public Storable(ModManifest manifest, CoreMod coreMod, BaseMod baseMod)
+        : base(manifest, coreMod, baseMod)
     {
     }
 
-    public void RegisterPrototypes(ProtoRegistrator registrator)
+    public override string Name => "Storable";
+    public override int Version => 1;
+
+    public override void RegisterPrototypes(ProtoRegistrator registrator)
     {
         var ids = new[] { Ids.Products.Exhaust };
 
@@ -49,28 +39,5 @@ public sealed class Storable : IMod
                 field.SetValue(proto, true);
             }
         }
-    }
-
-    public void ChangeConfigs(Lyst<IModConfig> configs)
-    {
-    }
-
-    public void RegisterDependencies(
-        DependencyResolverBuilder depBuilder,
-        Mafi.Core.Prototypes.ProtosDb protosDb,
-        bool wasLoaded)
-    {
-    }
-
-    public void EarlyInit(DependencyResolver resolver)
-    {
-    }
-
-    public void MigrateJsonConfig(VersionSlim savedVersion, Dict<string, object> savedValues)
-    {
-    }
-
-    public void Dispose()
-    {
     }
 }

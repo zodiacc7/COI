@@ -1,50 +1,62 @@
 using System.Reflection;
 using Mafi;
-using Mafi.Base;
 using Mafi.Core;
 using Mafi.Core.Mods;
 using Mafi.Core.Products;
+using Mafi.Collections;
 
 namespace Storable;
 
-public sealed class Storable : DataOnlyMod
+public sealed class Storable : IMod
 {
-    public string Name => nameof(Storable);
+    public string Name => "Storable";
     public int Version => 1;
+    public bool IsUiOnly => false;
 
-    public Storable(
-        ModManifest manifest,
-        CoreMod coreMod,
-        BaseMod baseMod)
-        : base(manifest)
+    public ModManifest Manifest { get; }
+    public Option<IConfig> ModConfig => Option<IConfig>.None;
+
+    public Storable(ModManifest manifest)
     {
+        Manifest = manifest;
     }
 
-    public override void RegisterPrototypes(ProtoRegistrator registrator)
+    public void Initialize(DependencyResolver resolver, bool gameWasLoaded) { }
+
+    public void ChangeConfigs(Lyst<IConfig> configs) { }
+
+    public void RegisterPrototypes(ProtoRegistrator registrator)
     {
         ProductProto.ID[] ids = { Ids.Products.Exhaust };
 
-        FieldInfo? fieldInfo = typeof(ProductProto).GetField(
+        var field = typeof(ProductProto).GetField(
             nameof(ProductProto.IsStorable),
             BindingFlags.Public | BindingFlags.Instance
         );
 
-        if (fieldInfo is null)
+        if (field == null)
         {
-            Log.Warning("Storable: IsStorable field not found");
+            Log.Warning("IsStorable field not found");
             return;
         }
 
-        foreach (ProductProto.ID id in ids)
+        foreach (var id in ids)
         {
-            if (registrator.PrototypesDb.TryGetProto(id, out ProductProto productProto))
+            if (registrator.PrototypesDb.TryGetProto(id, out ProductProto proto))
             {
-                fieldInfo.SetValue(productProto, true);
-            }
-            else
-            {
-                Log.Warning($"Storable: Product not found {id}");
+                field.SetValue(proto, true);
             }
         }
     }
+
+    public void RegisterDependencies(
+        DependencyResolverBuilder depBuilder,
+        ProtosDb protosDb,
+        bool wasLoaded) { }
+
+    public void EarlyInit(DependencyResolver resolver) { }
+
+    public void MigrateJsonConfig(VersionSlim savedVersion, Dict<string, object> savedValues) { }
+
+    public void Dispose() { }
 }

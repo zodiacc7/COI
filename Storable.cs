@@ -38,7 +38,8 @@ public sealed class Storable : DataOnlyMod
         // فقط روی آیتم‌های مشخص (safe + supported)
         var ids = new[]
         {
-            Ids.Products.Exhaust
+            Ids.Products.Exhaust,
+            Ids.Products.SteamDepleted
         };
 
         foreach (var id in ids)
